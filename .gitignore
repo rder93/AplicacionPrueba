@@ -165,3 +165,5 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio
+/app/src/androidTest/java/com/example/aplicacionprueba/ExampleInstrumentedTest.kt
+/app/src/test/java/com/example/aplicacionprueba/ExampleUnitTest.kt
