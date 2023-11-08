@@ -86,13 +86,13 @@ class ListaActivity : AppCompatActivity() {
 
     }
 
-    fun drawList(lista: ArrayList<ObjetoLista>){
+    private fun drawList(lista: ArrayList<ObjetoLista>) {
         binding.recyclerview.setHasFixedSize(true)
 
         val llm = LinearLayoutManager(this)
         llm.orientation = LinearLayoutManager.VERTICAL
         binding.recyclerview.layoutManager = llm
-        val adaptador = Adapter(applicationContext,lista)
+        val adaptador = Adapter(applicationContext, lista)
         binding.recyclerview.adapter = adaptador
     }
 

@@ -22,8 +22,9 @@
         android:id="@+id/buttonMapa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mapa"
+        android:text="ubicación"
         android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"/>
+        android:layout_marginEnd="40dp"
+        android:backgroundTint="@color/purple_200" />
 
 </LinearLayout>
