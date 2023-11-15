@@ -1,22 +1,32 @@
-package com.example.aplicacionprueba
+package com.example.aplicacionprueba.Mapa
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.aplicacionprueba.databinding.ActivityUbicacionBinding
+import com.example.aplicacionprueba.Helpers.UbicacionActual
+
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.example.aplicacionprueba.R
+import com.example.aplicacionprueba.databinding.ActivityMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
-import java.security.Permission
 
-class UbicacionActivity : AppCompatActivity() {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var binding: ActivityUbicacionBinding
+    private lateinit var mMap: GoogleMap
+    private lateinit var binding: ActivityMapsBinding
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var ubicacionActual: UbicacionActual<Location>
 
     private val CODIGO_SOLICITUD_UBICACION = 100
 
@@ -25,48 +35,41 @@ class UbicacionActivity : AppCompatActivity() {
     val permissionCoarseLocation =
         android.Manifest.permission.ACCESS_COARSE_LOCATION // Cambia esto al permiso que necesites
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var ubicacionActual: UbicacionActual<Location>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUbicacionBinding.inflate(layoutInflater)
+
+        binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         ubicacionActual = UbicacionActual<Location>(this)
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
     }
 
     override fun onStart() {
         super.onStart()
-
         if (validarPermisos()) {
             obtenerUbicacion()
         } else {
             pedirPermisos()
-        }
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            CODIGO_SOLICITUD_UBICACION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    obtenerUbicacion()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Se necesita aceptar los permisos de ubicacion para usar la app.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
         }
     }
 
@@ -101,14 +104,14 @@ class UbicacionActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun obtenerUbicacion() {
         ubicacionActual.obtenerUbicacion { ubicacion ->
-            if (ubicacion != null) {
+            if (ubicacion != null && mMap != null) {
                 // Haz algo con la ubicación actual
                 val latitud = ubicacion.latitude
                 val longitud = ubicacion.longitude
                 println("Latitud: $latitud, Longitud: $longitud")
-
-                binding.latitudTV.text = latitud.toString()
-                binding.longitudTV.text = longitud.toString()
+                val posicion = LatLng(latitud, longitud)
+                mMap.addMarker(MarkerOptions().position(posicion).title("HERE!"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion))
             } else {
                 println("No se pudo obtener la ubicación actual o los permisos no están habilitados.")
             }

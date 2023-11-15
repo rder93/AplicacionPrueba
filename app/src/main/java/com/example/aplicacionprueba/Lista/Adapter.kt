@@ -1,4 +1,4 @@
-package com.example.aplicacionprueba
+package com.example.aplicacionprueba.Lista
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.aplicacionprueba.R
 
 class Adapter(var context:Context, private val lista: ArrayList<ObjetoLista>) : RecyclerView.Adapter<Adapter.MyViewHolder>() {
 

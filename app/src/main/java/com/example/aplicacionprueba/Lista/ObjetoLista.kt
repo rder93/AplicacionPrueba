@@ -1,4 +1,4 @@
-package com.example.aplicacionprueba
+package com.example.aplicacionprueba.Lista
 
 class ObjetoLista(texto: String,description: String, imagenURL: String) {
 

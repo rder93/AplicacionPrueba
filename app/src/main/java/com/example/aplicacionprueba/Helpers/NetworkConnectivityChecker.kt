@@ -1,4 +1,4 @@
-package com.example.aplicacionprueba
+package com.example.aplicacionprueba.Helpers
 
 import android.content.Context
 import android.net.ConnectivityManager
