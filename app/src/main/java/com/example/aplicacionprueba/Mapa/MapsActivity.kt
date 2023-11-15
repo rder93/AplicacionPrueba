@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.aplicacionprueba.Helpers.LocationHelper
 import com.example.aplicacionprueba.Helpers.UbicacionActual
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -35,6 +37,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     val permissionCoarseLocation =
         android.Manifest.permission.ACCESS_COARSE_LOCATION // Cambia esto al permiso que necesites
 
+    private lateinit var locationHelper: LocationHelper<Location>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,6 +47,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         ubicacionActual = UbicacionActual<Location>(this)
+        locationHelper = LocationHelper(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -103,8 +108,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun obtenerUbicacion() {
-        ubicacionActual.obtenerUbicacion { ubicacion ->
+
+        locationHelper.obtenerUbicacion { location ->
+            if (location != null) {
+
+                mMap.isMyLocationEnabled = true
+                mMap.uiSettings.isMyLocationButtonEnabled = true
+
+                val latitud = location.latitude
+                val longitud = location.longitude
+
+                Toast.makeText(this, "Ubicación: $latitud, $longitud", Toast.LENGTH_SHORT).show()
+
+                val posicion = LatLng(latitud, longitud)
+                mMap.addMarker(MarkerOptions().position(posicion).title("HERE!"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion))
+            }
+        }
+
+        /*ubicacionActual.obtenerUbicacion { ubicacion ->
             if (ubicacion != null && mMap != null) {
+
+                mMap.isMyLocationEnabled = true
+                mMap.uiSettings.isMyLocationButtonEnabled = true
+
                 // Haz algo con la ubicación actual
                 val latitud = ubicacion.latitude
                 val longitud = ubicacion.longitude
@@ -115,6 +142,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             } else {
                 println("No se pudo obtener la ubicación actual o los permisos no están habilitados.")
             }
-        }
+        }*/
     }
 }
